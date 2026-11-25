@@ -1,0 +1,7 @@
+numpy==2.4.6
+scipy==1.17.1
+astropy==8.0.3
+lightkurve==2.6.0
+matplotlib==3.10.8
+pysocks==1.7.1
+requests==2.32.5
