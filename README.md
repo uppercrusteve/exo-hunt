@@ -67,13 +67,15 @@ UV_LINK_MODE=copy .venv/Scripts/pip install -r requirements.txt
 
 `UV_LINK_MODE=copy` 不是可选的：跨文件系统时 uv 默认硬链接，会装出半残的 numpy/scipy。
 
-`run.sh` 负责设代理再调 venv 里的解释器，改掉里面的地址或直接 `source` 前两行：
+`run.sh` 先设代理再调 venv 里的解释器。默认指向 `socks5://127.0.0.1:7890`，可以换或关掉：
 
 ```bash
-ALL_PROXY=socks5://127.0.0.1:7890 ./run.sh validate.py
+./run.sh validate.py                          # 用默认代理
+EXO_PROXY=socks5://10.0.0.5:1080 ./run.sh …   # 换一个
+EXO_NO_PROXY=1 ./run.sh …                     # 不用代理
 ```
 
-写 `socks5://`，不要写 `socks://`——urllib3 不认后者。
+代理地址写 `socks5://`，不要写 `socks://`——urllib3 不认后者。注意 GitHub 和 MAST 的方向可能相反：本机是 MAST 必须走代理、GitHub 必须直连，`git push` 和 `gh` 记得别继承代理变量。
 
 ## 用法
 
