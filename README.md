@@ -107,12 +107,12 @@ EXO_NO_PROXY=1 ./run.sh …                     # 不用代理
 按门槛切出候选清单（默认 `SNR>1000`，可逐项覆盖，也可以直接指定档位）：
 
 ```bash
-./run.sh select.py                                  # out/candidates.csv
-./run.sh select.py --preset strict                  # 85% 纯度那档
-./run.sh select.py --min-snr 3000 --max-vingness 0.5
+./run.sh candidates.py                                  # out/candidates.csv
+./run.sh candidates.py --preset strict                  # 85% 纯度那档
+./run.sh candidates.py --min-snr 3000 --max-vingness 0.5
 ```
 
-`select.py` 每次都会打印这一刀砍掉了多少召回，不只报留下了什么。
+`candidates.py` 每次都会打印这一刀砍掉了多少召回，不只报留下了什么。
 
 出相位折叠图：
 
@@ -137,6 +137,8 @@ EXO_NO_PROXY=1 ./run.sh …                     # 不用代理
 **奇偶深度分不开 P 和 2P。** 2P 解只用一半凌星，天然更"干净"，奇偶反而比真周期更一致。正确判据是看相位 0.5 处有没有等深的第二个凌星——有就减半。这个 bug 让 KIC 12020329 报出 14.55 d（真值 7.27504 d，正好 2 倍），修完误差 0.0 分钟。
 
 **BLS 的时长网格总是选最短的一格。** 在 29.4 分钟的 Kepler 采样下只有 2 个点落在凌星里，任何中位数都站不住。`measure` 改成向外扫时长取最深的那个。
+
+**别把脚本命名成 `select.py`。** 它遮蔽标准库的 `select`，urllib3 里 `import select` 拿到的是你的脚本，`poll` 和 `select` 两个实现一个都没有，于是无限递归到 `RecursionError`。为此重建过一次 venv 也没用——问题在项目里不在环境里。脚本现在叫 `candidates.py`。
 
 **质心检验算出来是 1300σ 却没区分度。** 因为 Kepler 的质心有约 1 像素的低频漂移，而稀释造成的位移只有 0.003 像素。加了 1 天的滑动中位数去趋势才勉强有信号，但 AUC 仍然只有 0.648。
 
